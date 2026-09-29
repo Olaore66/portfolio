@@ -1,36 +1,57 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Abraham Iborida · Portfolio
 
-## Getting Started
+Personal portfolio of **Abraham Iborida**, full-stack software engineer building production mobile banking, payment and real-time systems.
 
-First, run the development server:
+Built with **Next.js 16**, **React 19**, **Tailwind CSS v4**, **Motion** and **Lenis**.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## Features
+
+- Animated preloader, letter-by-letter hero reveal, magnetic buttons and a custom cursor
+- Smooth scrolling (Lenis) with scroll-linked parallax, text reveals and a velocity-driven tech marquee
+- Stacking project cards linking to live apps on Google Play and the web
+- Filterable, animated skills grid
+- Separate About page with story, values, quick facts and an FAQ
+- "Hire me" contact form that emails enquiries via [Resend](https://resend.com), with validation, a honeypot and rate limiting
+- Six-colour palette (including an accent sampled from a portrait) and no off-palette colours: Tailwind's defaults are disabled
+- Fully responsive, respects reduced-motion preferences
+
+## Project structure
+
+```
+src/
+├── app/
+│   ├── page.js              # home page
+│   ├── about/page.js        # about page
+│   ├── api/contact/route.js # contact form endpoint (sends email)
+│   ├── layout.js            # fonts, metadata, providers
+│   └── globals.css          # palette and utilities
+├── components/              # sections and animation primitives
+└── data/portfolio.js        # all site content lives here
+public/                      # photos, CV and project images
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+To update the content (bio, projects, skills, experience, FAQ), edit `src/data/portfolio.js`.
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+## Running locally
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm install
+npm run dev
+```
 
-## Learn More
+Then open http://localhost:3000.
 
-To learn more about Next.js, take a look at the following resources:
+## Contact form setup
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+The form sends email through Resend. Copy `.env.example` to `.env.local` and fill in:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```
+RESEND_API_KEY=re_...
+CONTACT_TO_EMAIL=you@example.com
+```
 
-## Deploy on Vercel
+Restart the dev server after changing env vars. When deploying (e.g. Vercel), add the same variables in the host's environment settings. `.env.local` is git-ignored and must never be committed.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Deploying
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The easiest option is [Vercel](https://vercel.com/new): import this repository, add the environment variables above, and deploy.

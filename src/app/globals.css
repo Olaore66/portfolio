@@ -1,26 +1,79 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/* The site's palette: five base colours plus one accent sampled from
+   Abraham's skin tone (cheek #9d5c4c, lifted so text on or around it stays
+   readable). Tailwind's default palette is switched off so nothing else sneaks in. */
+@theme {
+  --color-*: initial;
+  --color-ink: #071013;
+  --color-surf: #23b5d3;
+  --color-pacific: #75abbc;
+  --color-steel: #a2aebb;
+  --color-alabaster: #dfe0e2;
+  --color-skin: #c98a6b;
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  --ease-out-expo: cubic-bezier(0.22, 1, 0.36, 1);
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  --animate-fade-up: fade-up 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.2s both;
+  @keyframes fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
   }
 }
 
+@theme inline {
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --font-display: var(--font-playfair);
+}
+
+/* Outlined letterforms: hollow text with a hairline stroke. */
+@utility text-outline {
+  -webkit-text-stroke: 1.5px currentColor;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Slim scrollbar in palette colours (for scrollable panels like the contact form). */
+@utility scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--color-ink) 35%, transparent) transparent;
+
+  /* Safari */
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: color-mix(in srgb, var(--color-ink) 35%, transparent);
+    border-radius: 9999px;
+  }
+}
+
+html {
+  background: var(--color-ink);
+}
+
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-ink);
+  color: var(--color-alabaster);
+}
+
+::selection {
+  background: var(--color-surf);
+  color: var(--color-ink);
+}
+
+:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 4px;
+}
+
+@media (pointer: fine) {
+  .cursor-hidden-fine {
+    cursor: none;
+  }
 }
