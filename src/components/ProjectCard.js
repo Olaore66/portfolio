@@ -4,6 +4,7 @@ import { useRef } from "react";
 import Image from "next/image";
 import { motion, useScroll, useTransform } from "motion/react";
 import RollLink from "./RollLink";
+import { useMediaQuery } from "./useMediaQuery";
 
 // Solid card + contrasting preview panel for each palette theme.
 const THEMES = {
@@ -12,7 +13,8 @@ const THEMES = {
   steel: { card: "bg-steel text-ink", panel: "bg-ink text-steel", muted: "text-ink/75", line: "border-ink/25" },
 };
 
-// A sticky card that shrinks slightly as the next one stacks on top of it.
+// On tablets and up: a sticky card that shrinks slightly as the next one stacks on top of it.
+// On phones: a normal card that grows to fit, with the preview shown first.
 export default function ProjectCard({ project, index, progress, range, targetScale }) {
   const { title, year, category, role, description, tags, image, imageFit, imageSize, live, liveLabel, repo, theme } = project;
   const href = live || repo;
@@ -21,15 +23,17 @@ export default function ProjectCard({ project, index, progress, range, targetSca
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "start start"] });
   const imageScale = useTransform(scrollYProgress, [0, 1], [1.4, 1]);
-  // Gentler zoom for real screenshots so they settle without looking cropped.
+  // Gentler zoom for real screenshots so they settle without looking cropped
+  // (tablet and up only; on phones the image leads the card and must show in full).
   const imageZoom = useTransform(scrollYProgress, [0, 1], [1.12, 1]);
   const scale = useTransform(progress, range, [1, targetScale]);
+  const stack = useMediaQuery("(min-width: 768px)");
 
   return (
-    <div ref={ref} className="sticky top-0 flex h-svh items-center justify-center">
+    <div ref={ref} className={stack ? "sticky top-0 flex h-svh items-center justify-center" : "py-3"}>
       <motion.article
-        style={{ scale, top: `calc(-4vh + ${index * 24}px)` }}
-        className={`group relative grid h-[78svh] w-full max-w-7xl origin-top grid-rows-[auto_1fr] overflow-hidden rounded-3xl p-5 sm:p-8 md:grid-cols-[1fr_1.35fr] md:grid-rows-1 md:gap-10 ${
+        style={stack ? { scale, top: `calc(-4vh + ${index * 24}px)` } : undefined}
+        className={`group relative mx-auto flex w-full max-w-7xl origin-top flex-col overflow-hidden rounded-3xl p-5 sm:p-8 md:grid md:h-[78svh] md:grid-cols-[1fr_1.35fr] md:gap-10 ${
           // On large screens banners get a wider image column so the artwork reads larger.
           imageFit === "banner" ? "lg:grid-cols-[0.8fr_1.6fr] lg:gap-8" : ""
         } ${t.card}`}
@@ -80,11 +84,15 @@ export default function ProjectCard({ project, index, progress, range, targetSca
         </div>
 
         {/* Preview. Images are the panel themselves (no backing box), so there's no empty space around them. */}
-        <div className="pointer-events-none relative mt-6 min-h-40 md:mt-0">
+        <div
+          className={`pointer-events-none relative order-first mb-6 md:order-none md:mb-0 md:min-h-40 ${
+            imageFit === "banner" ? "" : imageFit === "contain" ? "h-80 md:h-auto" : "h-48 md:h-auto"
+          }`}
+        >
           {image && imageFit === "banner" ? (
             <div className="flex h-full items-center">
               <div className="w-full overflow-hidden rounded-2xl">
-                <motion.div style={{ scale: imageZoom }}>
+                <motion.div style={{ scale: stack ? imageZoom : 1 }}>
                   <Image
                     src={image}
                     alt={`${title} promotional banner`}
@@ -97,7 +105,7 @@ export default function ProjectCard({ project, index, progress, range, targetSca
               </div>
             </div>
           ) : image && imageFit === "contain" ? (
-            <motion.div style={{ scale: imageZoom }} className="absolute inset-0">
+            <motion.div style={{ scale: stack ? imageZoom : 1 }} className="absolute inset-0">
               <Image
                 src={image}
                 alt={`${title} app screenshot`}

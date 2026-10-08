@@ -8,6 +8,7 @@ import { useLoaded, useOpenContact } from "./Providers";
 import RevealText from "./RevealText";
 import Magnetic from "./Magnetic";
 import { LocalTime } from "./Footer";
+import { useMediaQuery } from "./useMediaQuery";
 
 const EASE = [0.22, 1, 0.36, 1];
 
@@ -156,6 +157,9 @@ export default function Hero() {
   const portraitY = useTransform(scrollYProgress, [0, 1], ["0%", "-10%"]);
   const textY = useTransform(scrollYProgress, [0, 1], ["0%", "15%"]);
   const fade = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
+  // Scroll fade and drift only on large screens, where the hero fits one screen;
+  // on phones the stacked hero is tall and would fade before it's been read.
+  const desktop = useMediaQuery("(min-width: 1024px)");
 
   const fadeUp = (delay) => ({
     initial: { opacity: 0, y: 24 },
@@ -172,9 +176,9 @@ export default function Hero() {
       className="relative overflow-x-clip px-4 pb-20 pt-28 sm:px-8 lg:flex lg:min-h-svh lg:items-center lg:pb-12 lg:pt-28"
     >
       <div className="mx-auto grid w-full max-w-7xl items-center gap-14 lg:grid-cols-[0.95fr_1.05fr] lg:gap-16">
-        <Portrait play={loaded} y={portraitY} />
+        <Portrait play={loaded} y={desktop ? portraitY : 0} />
 
-        <motion.div style={{ y: textY, opacity: fade }}>
+        <motion.div style={desktop ? { y: textY, opacity: fade } : undefined}>
           <motion.div
             {...fadeUp(0.5)}
             className="mb-6 flex flex-wrap items-center gap-4 font-mono text-[11px] uppercase tracking-[0.25em] text-steel"
