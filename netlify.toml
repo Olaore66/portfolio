@@ -1,0 +1,5 @@
+[build]
+  # Remove any Turbopack cache restored from earlier builds; it may contain
+  # server-side secret values that would fail Netlify's secrets scanning.
+  command = "rm -rf .next/cache/turbopack && npm run build"
+  publish = ".next"
