@@ -1,0 +1,6 @@
+# Turbopack writes the build environment into its on-disk cache. Netlify's
+# secret scan treats that cache as build output and fails when it sees
+# RESEND_API_KEY there. The cache is not published. The contact route reads
+# the key on the server when a form is submitted.
+[build.environment]
+  SECRETS_SCAN_OMIT_PATHS = ".netlify/.next/cache/**,.next/cache/**"

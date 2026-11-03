@@ -59,8 +59,11 @@ export async function POST(request) {
     return Response.json({ error: "Too many messages. Please try again in a few minutes." }, { status: 429 });
   }
 
-  const apiKey = process.env.RESEND_API_KEY;
-  const to = process.env.CONTACT_TO_EMAIL;
+  // A local binding keeps these as runtime lookups. Direct process.env.NAME
+  // access can be copied into the Turbopack cache and fail Netlify's secret scan.
+  const env = process.env;
+  const apiKey = env.RESEND_API_KEY;
+  const to = env.CONTACT_TO_EMAIL;
   if (!apiKey || !to) {
     console.error("[contact] RESEND_API_KEY or CONTACT_TO_EMAIL is not set; message not sent.");
     return Response.json(
@@ -87,7 +90,7 @@ export async function POST(request) {
       method: "POST",
       headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
       body: JSON.stringify({
-        from: process.env.CONTACT_FROM_EMAIL || "Portfolio Contact <onboarding@resend.dev>",
+        from: env.CONTACT_FROM_EMAIL || "Portfolio Contact <onboarding@resend.dev>",
         to: [to],
         reply_to: email,
         subject,
