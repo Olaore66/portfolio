@@ -131,8 +131,10 @@ export const services = [
 
 // `theme` picks the card colour: "surf", "alabaster" or "steel".
 // Add `live` / `repo` URLs to make a card clickable; `liveLabel` renames the live link.
-// `image` fills the panel. `imageFit: "contain"` shows a transparent device mockup uncropped;
+// `links` adds more than one text link. `image` fills the panel.
+// `imageFit: "contain"` shows a transparent device mockup uncropped;
 // `imageFit: "banner"` shows a full rectangular graphic with rounded corners (needs `imageSize: [w, h]`).
+// `video` loops a muted product demo in the panel, with `image` as the poster.
 export const projects = [
   {
     title: "Wisemonie",
@@ -149,6 +151,27 @@ export const projects = [
     liveLabel: "Google Play",
     repo: null,
     theme: "surf",
+  },
+  {
+    title: "MyWatchmates",
+    year: "2026",
+    category: "Co-viewing · Full stack",
+    role: "Full-stack, end to end",
+    description:
+      "Watch rooms for friends and diaspora communities. The NestJS and Tailwind app keeps playback in sync, with notes, chat and LiveKit calls beside the video. Java Spring Boot on AWS runs the rooms, and Brevo sends the reminders.",
+    tags: ["Java", "Spring Boot", "NestJS", "Tailwind", "LiveKit", "Brevo", "AWS"],
+    image: "/projects/mywatchmates/demo-poster.jpg",
+    imageFit: "banner",
+    imageSize: [1280, 584],
+    video: "/projects/mywatchmates/demo.mp4",
+    live: "https://www.mywatchmates.com",
+    liveLabel: "Visit site",
+    links: [
+      { label: "Visit site", href: "https://www.mywatchmates.com" },
+      { label: "Sign up", href: "https://www.mywatchmates.com/signup" },
+    ],
+    repo: null,
+    theme: "steel",
   },
   {
     title: "KinoxPlus",
@@ -233,7 +256,7 @@ export const aboutPage = {
   story: [
     "I studied Computer Engineering at the Federal University of Technology, Minna, and started my career at ITSS Nigeria building enterprise fintech apps with Temenos Quantum Visualizer, Spring Boot and MySQL.",
     "At Techmaestrogroup I moved up to Senior Technical Consultant, architecting mobile banking apps for tier-1 banks in Burkina Faso, Ethiopia and The Gambia, and turning rigid Temenos T24 core banking APIs into fast, mobile-ready Experience APIs.",
-    "Today I'm the product engineer behind Wisemonie, a money-discipline app I've built end to end, from the Flutter app to the Spring Boot backend and ledger. I also build real-time backends for products like KinoxPlus and DGC Global.",
+    "Today I'm the product engineer behind Wisemonie, a money-discipline app I've built end to end, from the Flutter app to the Spring Boot backend and ledger. I also build real-time backends for products like MyWatchmates, KinoxPlus and DGC Global.",
   ],
   values: [
     {

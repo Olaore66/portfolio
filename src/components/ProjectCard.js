@@ -16,8 +16,12 @@ const THEMES = {
 // On tablets and up: a sticky card that shrinks slightly as the next one stacks on top of it.
 // On phones: a normal card that grows to fit, with the preview shown first.
 export default function ProjectCard({ project, index, progress, range, targetScale }) {
-  const { title, year, category, role, description, tags, image, imageFit, imageSize, live, liveLabel, repo, theme } = project;
+  const { title, year, category, role, description, tags, image, imageFit, imageSize, video, live, liveLabel, links, repo, theme } = project;
   const href = live || repo;
+  const textLinks = links?.length ? links : [
+    live ? { label: liveLabel ?? "Live site", href: live } : null,
+    repo ? { label: "Source", href: repo } : null,
+  ].filter(Boolean);
   const t = THEMES[theme] ?? THEMES.surf;
 
   const ref = useRef(null);
@@ -28,14 +32,16 @@ export default function ProjectCard({ project, index, progress, range, targetSca
   const imageZoom = useTransform(scrollYProgress, [0, 1], [1.12, 1]);
   const scale = useTransform(progress, range, [1, targetScale]);
   const stack = useMediaQuery("(min-width: 768px)");
+  const reduceMotion = useMediaQuery("(prefers-reduced-motion: reduce)");
+  const wide = imageFit === "banner" || Boolean(video);
 
   return (
     <div ref={ref} className={stack ? "sticky top-0 flex h-svh items-center justify-center" : "py-3"}>
       <motion.article
         style={stack ? { scale, top: `calc(-4vh + ${index * 24}px)` } : undefined}
         className={`group relative mx-auto flex w-full max-w-7xl origin-top flex-col overflow-hidden rounded-3xl p-5 sm:p-8 md:grid md:h-[78svh] md:grid-cols-[1fr_1.35fr] md:gap-10 ${
-          // On large screens banners get a wider image column so the artwork reads larger.
-          imageFit === "banner" ? "lg:grid-cols-[0.8fr_1.6fr] lg:gap-8" : ""
+          // On large screens banners and product demos get a wider image column.
+          wide ? "lg:grid-cols-[0.8fr_1.6fr] lg:gap-8" : ""
         } ${t.card}`}
       >
         {/* Makes the whole card clickable; real links below sit above it via z-10. */}
@@ -69,27 +75,48 @@ export default function ProjectCard({ project, index, progress, range, targetSca
               </li>
             ))}
           </ul>
-          <div className="relative z-10 mt-6 flex gap-6 text-sm font-medium empty:hidden md:mt-auto">
-            {live && (
-              <RollLink href={live} target="_blank" rel="noopener noreferrer" className="border-b border-current pb-0.5">
-                {liveLabel ?? "Live site"} ↗
+          <div className="relative z-10 mt-6 flex flex-wrap gap-x-6 gap-y-2 text-sm font-medium empty:hidden md:mt-auto">
+            {textLinks.map((link) => (
+              <RollLink key={link.href} href={link.href} target="_blank" rel="noopener noreferrer" className="border-b border-current pb-0.5">
+                {link.label} ↗
               </RollLink>
-            )}
-            {repo && (
-              <RollLink href={repo} target="_blank" rel="noopener noreferrer" className="border-b border-current pb-0.5">
-                Source ↗
-              </RollLink>
-            )}
+            ))}
           </div>
         </div>
 
         {/* Preview. Images are the panel themselves (no backing box), so there's no empty space around them. */}
         <div
           className={`pointer-events-none relative order-first mb-6 md:order-none md:mb-0 md:min-h-40 ${
-            imageFit === "banner" ? "" : imageFit === "contain" ? "h-80 md:h-auto" : "h-48 md:h-auto"
+            wide ? "" : imageFit === "contain" ? "h-80 md:h-auto" : "h-48 md:h-auto"
           }`}
         >
-          {image && imageFit === "banner" ? (
+          {video && image ? (
+            <div className="flex h-full items-center">
+              <div className="w-full overflow-hidden rounded-2xl">
+                {reduceMotion ? (
+                  <Image
+                    src={image}
+                    alt={`${title} product screenshot`}
+                    width={imageSize[0]}
+                    height={imageSize[1]}
+                    sizes="(min-width: 768px) 55vw, 90vw"
+                    className="block h-auto w-full"
+                  />
+                ) : (
+                  <video
+                    src={video}
+                    poster={image}
+                    aria-label={`${title} product demo`}
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                    className="block h-auto w-full"
+                  />
+                )}
+              </div>
+            </div>
+          ) : image && imageFit === "banner" ? (
             <div className="flex h-full items-center">
               <div className="w-full overflow-hidden rounded-2xl">
                 <motion.div style={{ scale: stack ? imageZoom : 1 }}>
